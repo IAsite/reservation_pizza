@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin – La Bella Pizza</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0F0D0B; --surface: #1A1713; --border: #332E27;
+  --or: #D4973A; --texte: #F0EAE0; --texte2: #A89880;
+}
+body {
+  font-family: 'Syne', sans-serif; background: var(--bg); color: var(--texte);
+  margin: 0; padding: 2rem;
+}
+h1 { color: var(--or); margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); }
+.stat-val { font-size: 1.8rem; font-weight: 700; color: var(--or); }
+.stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--texte2); }
+
+/* Tableau */
+.table-wrap { overflow-x: auto; background: var(--surface); border-radius: 12px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { background: rgba(212, 151, 58, 0.1); padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: var(--or); border-bottom: 1px solid var(--border); }
+td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: top; }
+tr:hover { background: rgba(255,255,255,0.02); }
+
+.badge-pizza { background: var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; }
+.btn-del { background: #3d1a1a; color: #ff8080; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+.btn-del:hover { background: #b94040; color: white; }
+
+.empty { padding: 3rem; text-align: center; color: var(--texte2); }
+</style>
+</head>
+<body>
+
+<h1>Panneau d'administration</h1>
+
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-val" id="total-cmd">0</div>
+    <div class="stat-label">Commandes totales</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" id="total-piz">0</div>
+    <div class="stat-label">Pizzas à faire</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" id="total-ca">0,00 €</div>
+    <div class="stat-label">Chiffre d'affaires</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Date / Heure Retrait</th>
+        <th>Client</th>
+        <th>Commande</th>
+        <th>Total</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="admin-table">
+      </tbody>
+  </table>
+  <div id="no-data" class="empty" style="display:none;">Aucune réservation pour le moment.</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+/* CONFIGURATION FIREBASE (Utilisez la même que sur votre page client) */
+const firebaseConfig = {
+  apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
+  authDomain: "pizza-c591d.firebaseapp.com",
+  projectId: "pizza-c591d",
+  storageBucket: "pizza-c591d.firebasestorage.app",
+  messagingSenderId: "967488725853",
+  appId: "1:967488725853:web:13704e75a7c0d683917eb4"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Écouter les réservations en temps réel
+db.collection('reservations').orderBy('creeLe', 'desc').onSnapshot(snapshot => {
+  const tbody = document.getElementById('admin-table');
+  const noData = document.getElementById('no-data');
+  
+  let html = "";
+  let countCmd = 0;
+  let countPiz = 0;
+  let countCA = 0;
+
+  if (snapshot.empty) {
+    noData.style.display = "block";
+    tbody.innerHTML = "";
+  } else {
+    noData.style.display = "none";
+    snapshot.forEach(doc => {
+      const res = doc.data();
+      const id = doc.id;
+      
+      countCmd++;
+      countPiz += (res.nbPizzas || 0);
+      countCA += (res.totalEuros || 0);
+
+      // Formatage de la date de retrait
+      const dateFr = res.dateRetrait ? res.dateRetrait.split('-').reverse().join('/') : '??';
+      
+      // Liste des noms de pizzas
+      const listePizzas = res.detailsPizzas ? res.detailsPizzas.map(name => `<span class="badge-pizza">${name}</span>`).join('') : 'Non précisé';
+
+      html += `
+        <tr>
+          <td>
+            <strong>${dateFr}</strong><br>
+            <span style="color:var(--or)">${res.heureRetrait}</span>
+          </td>
+          <td>
+            <strong>${res.nom}</strong><br>
+            <span style="color:var(--texte2); font-size:0.8rem;">${res.telephone}</span>
+          </td>
+          <td>
+            ${listePizzas}<br>
+            <small style="color:var(--texte2)">${res.nbBoissons} boisson(s)</small>
+          </td>
+          <td><strong style="color:var(--or)">${res.totalEuros.toFixed(2)} €</strong></td>
+          <td>
+            <button class="btn-del" onclick="supprimer('${id}')">Supprimer</button>
+          </td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+  }
+
+  // Mise à jour des stats
+  document.getElementById('total-cmd').textContent = countCmd;
+  document.getElementById('total-piz').textContent = countPiz;
+  document.getElementById('total-ca').textContent = countCA.toFixed(2).replace('.', ',') + " €";
+});
+
+// Fonction pour supprimer une commande
+async function supprimer(id) {
+  if(confirm("Voulez-vous vraiment supprimer cette réservation ?")) {
+    try {
+      await db.collection('reservations').doc(id).delete();
+    } catch(e) {
+      alert("Erreur lors de la suppression : " + e.message);
+    }
+  }
+}
+</script>
+</body>
+</html>
