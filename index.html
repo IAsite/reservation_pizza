@@ -314,7 +314,7 @@ async function soumettre(){
     document.getElementById('main-form').style.display='none';
     document.getElementById('success-screen').style.display='block';
     document.getElementById('success-txt').innerHTML=
-      `Merci <strong>${nom}</strong> !<br>Votre commande (${nomsPizzas.join(', ')}) est enregistrée pour le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
+      `Merci de votre commande <strong>${nom}</strong> !<br>Votre commande (${nomsPizzas.join(', ')}) est enregistrée pour le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
   } catch(e) {
     showErr('Erreur : '+e.message);
     btn.disabled=false; btn.innerHTML='Confirmer la réservation';
