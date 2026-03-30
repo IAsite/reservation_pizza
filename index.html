@@ -272,7 +272,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const PRIX_PIZZA=9.50, PRIX_FORMULE=10.00;
-const DEBUT_H=18, DEBUT_M=30, FIN_H=24, STEP=15; 
+const DEBUT_H=19, DEBUT_M=30, FIN_H=24, STEP=15; 
 const MAX_PAR_CRENEAU = 2; 
 
 let S={pizzas:1,boissons:0,slot:null};
@@ -285,7 +285,7 @@ function buildSlots(){
   const g=document.getElementById('slots-grid'); g.innerHTML='';
   for(let h=DEBUT_H; h<FIN_H; h++){
     for(let m=0; m<60; m+=STEP){
-      if(h===18 && m<30) continue; 
+      if(h===19 && m<30) continue; 
       const lbl = pad(h === 24 ? 0 : h) + ':' + pad(m);
       const d=document.createElement('div');
       d.className='slot'+(S.slot===lbl?' active':'');
