@@ -74,13 +74,11 @@ input::placeholder{color:var(--texte3);}
 .btn-submit{width:100%;height:56px;background:var(--or);color:#0F0D0B;border:none;border-radius:var(--r);font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:background .2s;}
 .btn-submit:disabled{background:#2E2920;color:var(--texte3);cursor:not-allowed;}
 
-.error-msg{background:rgba(185,64,64,0.1);border:1px solid rgba(185,64,64,0.3);color:#E08080;border-radius:8px;padding:.8rem 1rem;font-size:.86rem;margin-bottom:.9rem;display:none;}
+.error-msg{background:rgba(185,64,64,0.1);border:1px solid rgba(185,64,64,0.3);color:#E08080;border-radius:8px;padding:.8rem 1rem;font-size:.86rem;margin-bottom:0.9rem;display:none;}
+.surcharge-msg{background:rgba(212,151,58,0.1);border:1px solid var(--or);color:var(--or-pale);padding:1rem;border-radius:8px;font-size:0.85rem;margin-bottom:1rem;line-height:1.4;display:none;}
 
 .success-screen{display:none;text-align:center;padding:3rem 1.5rem;animation:fadeUp .4s ease;}
 .ok-badge{width:76px;height:76px;border-radius:50%;background:rgba(74,140,92,0.13);border:1px solid rgba(74,140,92,0.35);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.4rem;}
-
-.cfg{background:rgba(212,151,58,0.07);border:1px solid rgba(212,151,58,0.18);border-radius:8px;padding:.8rem 1rem;font-size:.78rem;color:var(--texte3);line-height:1.6;margin-bottom:1.3rem;}
-.spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(15,13,11,.25);border-top-color:#0F0D0B;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -99,8 +97,6 @@ input::placeholder{color:var(--texte3);}
 </header>
 
 <div class="wrap">
-
-  <div class="cfg">⚙️ <strong>Firebase requis :</strong> Remplissez la section <code>firebaseConfig</code> dans le script.</div>
 
   <div class="prix-row">
     <div class="prix-item">
@@ -128,7 +124,7 @@ input::placeholder{color:var(--texte3);}
         <label for="date">Date de retrait</label>
         <input type="date" id="date"/>
       </div>
-      <label style="display:block;margin-bottom:.65rem;font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);">Heure de retrait</label>
+      <label style="display:block;margin-bottom:.65rem;font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);">Heure de retrait (toutes les 15 min)</label>
       <div class="slots-grid" id="slots-grid"></div>
       <div class="slot-err" id="slot-err">Veuillez choisir un créneau horaire.</div>
     </div>
@@ -168,6 +164,8 @@ input::placeholder{color:var(--texte3);}
     </div>
 
     <div class="error-msg" id="error-msg"></div>
+    <div class="surcharge-msg" id="surcharge-msg">⚠️ <strong>Restaurant surchargé :</strong> Il y a déjà trop de commandes pour ce créneau. Veuillez attendre 15 min ou choisir une autre heure, nous sommes surchargés pour le moment.</div>
+    
     <button class="btn-submit" id="btn-submit" onclick="soumettre()">Confirmer la réservation</button>
   </div>
 
@@ -177,11 +175,15 @@ input::placeholder{color:var(--texte3);}
     <p id="success-txt"></p>
     <button class="btn-submit" style="background:var(--surface2); color:var(--texte); margin-top:1rem;" onclick="resetForm()">Nouvelle réservation</button>
   </div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
+/* =====================================================
+    🔧 CONFIGURATION FIREBASE (À REMPLIR)
+===================================================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
   authDomain: "pizza-c591d.firebaseapp.com",
@@ -193,9 +195,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+/* ---- Config Horaires & Limites ---- */
 const PRIX_PIZZA=9.50, PRIX_FORMULE=10.00;
-/* --- NOUVELLES HORAIRES --- */
-const DEBUT_H=18, DEBUT_M=30, FIN_H=24, STEP=30; 
+const DEBUT_H=18, DEBUT_M=30, FIN_H=24, STEP=15; // STEP changé à 15 min
+const MAX_PAR_CRENEAU = 2; // Limite changée à 2 commandes
 
 let S={pizzas:1,boissons:0,slot:null};
 
@@ -207,7 +210,7 @@ function buildSlots(){
   const g=document.getElementById('slots-grid'); g.innerHTML='';
   for(let h=DEBUT_H; h<FIN_H; h++){
     for(let m=0; m<60; m+=STEP){
-      if(h===18 && m<30) continue; // On commence à 18h30
+      if(h===18 && m<30) continue; 
       
       const lbl = pad(h === 24 ? 0 : h) + ':' + pad(m);
       const d=document.createElement('div');
@@ -216,7 +219,7 @@ function buildSlots(){
       d.onclick=()=>{S.slot=lbl;document.getElementById('slot-err').style.display='none';buildSlots();};
       g.appendChild(d);
       
-      if(h === 23 && m === 30) { // Ajout de l'heure pile de minuit
+      if(h === 23 && m === 45) { // Finir pile à minuit
          const final = "00:00";
          const df = document.createElement('div');
          df.className='slot'+(S.slot===final?' active':'');
@@ -268,30 +271,51 @@ async function soumettre(){
   const tel=document.getElementById('tel').value.trim();
   const date=document.getElementById('date').value;
   const errEl=document.getElementById('error-msg');
-  const nomsPizzas = Array.from(document.querySelectorAll('.piz-name')).map(i => i.value.trim()).filter(v => v !== "");
+  const surchEl=document.getElementById('surcharge-msg');
+  const btn=document.getElementById('btn-submit');
+  
+  const nameInputs = document.querySelectorAll('.piz-name');
+  const nomsPizzas = Array.from(nameInputs).map(i => i.value.trim()).filter(v => v !== "");
 
   errEl.style.display='none';
+  surchEl.style.display='none';
+
   if(!nom) return showErr('Veuillez saisir votre nom.');
   if(!tel) return showErr('Veuillez saisir votre téléphone.');
   if(!S.slot) { document.getElementById('slot-err').style.display='block'; return; }
   if(S.pizzas === 0) return showErr('Choisissez au moins une pizza.');
   if(nomsPizzas.length < S.pizzas) return showErr('Indiquez le nom de chaque pizza.');
 
-  const total=maj();
-  const btn=document.getElementById('btn-submit');
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Envoi…';
+  btn.disabled = true;
+  btn.innerHTML = 'Vérification...';
 
-  try{
+  try {
+    // VÉRIFICATION SURCHARGE (Max 2 par 15 min)
+    const snapshot = await db.collection('reservations')
+      .where('dateRetrait', '==', date)
+      .where('heureRetrait', '==', S.slot)
+      .get();
+
+    if (snapshot.size >= MAX_PAR_CRENEAU) {
+      surchEl.style.display = 'block';
+      surchEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      btn.disabled = false;
+      btn.innerHTML = 'Confirmer la réservation';
+      return;
+    }
+
+    const total=maj();
     await db.collection('reservations').add({
       nom, telephone:tel, dateRetrait:date, heureRetrait:S.slot,
       nbPizzas:S.pizzas, nbBoissons:S.boissons, detailsPizzas: nomsPizzas,
       totalEuros:total, creeLe:firebase.firestore.FieldValue.serverTimestamp()
     });
+
     document.getElementById('main-form').style.display='none';
     document.getElementById('success-screen').style.display='block';
     document.getElementById('success-txt').innerHTML=
-      `Merci <strong>${nom}</strong> !<br>Votre commande (<strong>${nomsPizzas.join(', ')}</strong>) est enregistrée pour le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
-  }catch(e){
+      `Merci <strong>${nom}</strong> !<br>Votre commande (${nomsPizzas.join(', ')}) est enregistrée pour le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
+  } catch(e) {
     showErr('Erreur : '+e.message);
     btn.disabled=false; btn.innerHTML='Confirmer la réservation';
   }
