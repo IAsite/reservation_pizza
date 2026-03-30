@@ -29,9 +29,12 @@ th { background: rgba(212, 151, 58, 0.1); padding: 1rem; font-size: 0.8rem; text
 td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: top; }
 tr:hover { background: rgba(255,255,255,0.02); }
 
-.badge-pizza { background: var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; }
-.btn-del { background: #3d1a1a; color: #ff8080; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+.badge-pizza { background: var(--border); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; display: inline-block; margin-bottom: 4px; }
+.btn-del { background: #3d1a1a; color: #ff8080; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
 .btn-del:hover { background: #b94040; color: white; }
+
+.time-info { font-size: 0.75rem; color: var(--texte2); line-height: 1.4; }
+.order-time { color: var(--or); font-weight: 600; }
 
 .empty { padding: 3rem; text-align: center; color: var(--texte2); }
 </style>
@@ -59,15 +62,15 @@ tr:hover { background: rgba(255,255,255,0.02); }
   <table>
     <thead>
       <tr>
-        <th>Date / Heure Retrait</th>
+        <th>Retrait</th>
+        <th>Passée le (Prise à)</th>
         <th>Client</th>
         <th>Commande</th>
         <th>Total</th>
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody id="admin-table">
-      </tbody>
+    <tbody id="admin-table"></tbody>
   </table>
   <div id="no-data" class="empty" style="display:none;">Aucune réservation pour le moment.</div>
 </div>
@@ -75,7 +78,6 @@ tr:hover { background: rgba(255,255,255,0.02); }
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-/* CONFIGURATION FIREBASE (Utilisez la même que sur votre page client) */
 const firebaseConfig = {
   apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
   authDomain: "pizza-c591d.firebaseapp.com",
@@ -87,7 +89,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Écouter les réservations en temps réel
 db.collection('reservations').orderBy('creeLe', 'desc').onSnapshot(snapshot => {
   const tbody = document.getElementById('admin-table');
   const noData = document.getElementById('no-data');
@@ -110,17 +111,30 @@ db.collection('reservations').orderBy('creeLe', 'desc').onSnapshot(snapshot => {
       countPiz += (res.nbPizzas || 0);
       countCA += (res.totalEuros || 0);
 
-      // Formatage de la date de retrait
+      // 1. Formatage date de RETRAIT
       const dateFr = res.dateRetrait ? res.dateRetrait.split('-').reverse().join('/') : '??';
       
-      // Liste des noms de pizzas
+      // 2. Formatage date de COMMANDE (l'instant où il a cliqué)
+      let commandeLe = "Date inconnue";
+      if (res.creeLe) {
+        const d = res.creeLe.toDate();
+        const jour = String(d.getDate()).padStart(2, '0');
+        const mois = String(d.getMonth() + 1).padStart(2, '0');
+        const heures = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        commandeLe = `${jour}/${mois} à <span class="order-time">${heures}:${minutes}</span>`;
+      }
+
       const listePizzas = res.detailsPizzas ? res.detailsPizzas.map(name => `<span class="badge-pizza">${name}</span>`).join('') : 'Non précisé';
 
       html += `
         <tr>
           <td>
             <strong>${dateFr}</strong><br>
-            <span style="color:var(--or)">${res.heureRetrait}</span>
+            <span style="color:var(--or); font-size:1.1rem; font-weight:700;">${res.heureRetrait}</span>
+          </td>
+          <td class="time-info">
+            ${commandeLe}
           </td>
           <td>
             <strong>${res.nom}</strong><br>
@@ -132,7 +146,7 @@ db.collection('reservations').orderBy('creeLe', 'desc').onSnapshot(snapshot => {
           </td>
           <td><strong style="color:var(--or)">${res.totalEuros.toFixed(2)} €</strong></td>
           <td>
-            <button class="btn-del" onclick="supprimer('${id}')">Supprimer</button>
+            <button class="btn-del" onclick="supprimer('${id}')">Terminé / Suppr.</button>
           </td>
         </tr>
       `;
@@ -140,19 +154,17 @@ db.collection('reservations').orderBy('creeLe', 'desc').onSnapshot(snapshot => {
     tbody.innerHTML = html;
   }
 
-  // Mise à jour des stats
   document.getElementById('total-cmd').textContent = countCmd;
   document.getElementById('total-piz').textContent = countPiz;
   document.getElementById('total-ca').textContent = countCA.toFixed(2).replace('.', ',') + " €";
 });
 
-// Fonction pour supprimer une commande
 async function supprimer(id) {
-  if(confirm("Voulez-vous vraiment supprimer cette réservation ?")) {
+  if(confirm("Supprimer cette commande ?")) {
     try {
       await db.collection('reservations').doc(id).delete();
     } catch(e) {
-      alert("Erreur lors de la suppression : " + e.message);
+      alert("Erreur : " + e.message);
     }
   }
 }
