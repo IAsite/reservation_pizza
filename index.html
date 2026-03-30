@@ -31,18 +31,15 @@ header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,6vw,3.6r
 
 .wrap{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 1.25rem 6rem;}
 
-/* Prix */
 .prix-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.5rem;}
 .prix-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.3rem;display:flex;gap:.9rem;align-items:center;}
 .prix-icon{font-size:1.4rem;}
 .prix-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);margin-bottom:.25rem;}
 .prix-val{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--or-pale);}
 
-/* Section label */
 .slabel{font-size:.68rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--texte3);margin-bottom:.8rem;display:flex;align-items:center;gap:.7rem;}
 .slabel::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* Blocks */
 .block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem;margin-bottom:1.1rem;animation:fadeUp .3s ease both;}
 
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
@@ -52,7 +49,6 @@ input,select{height:46px;background:var(--surface2);border:1px solid var(--borde
 input:focus,select:focus{border-color:var(--or-dim);}
 input::placeholder{color:var(--texte3);}
 
-/* Steppers */
 .qty-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
 .qty-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.95rem 1.1rem;display:flex;flex-direction:column;gap:.55rem;}
 .qty-header{display:flex;align-items:center;gap:.5rem;}
@@ -64,14 +60,12 @@ input::placeholder{color:var(--texte3);}
 .sval{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--texte);min-width:26px;text-align:center;}
 .qty-sub{font-size:.72rem;color:var(--texte3);}
 
-/* Time slots */
 .slots-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;}
 @media(max-width:430px){.slots-grid{grid-template-columns:repeat(4,1fr);}}
 .slot{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:.55rem .2rem;text-align:center;font-size:.82rem;font-weight:600;color:var(--texte2);cursor:pointer;transition:all .15s;user-select:none;}
 .slot.active{background:rgba(212,151,58,0.14);border-color:var(--or-dim);color:var(--or-pale);}
 .slot-err{font-size:.78rem;color:#E08080;margin-top:.5rem;display:none;}
 
-/* Resume */
 .resume{background:rgba(212,151,58,0.07);border:1px solid rgba(212,151,58,0.22);border-radius:var(--r);padding:1.3rem 1.5rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;}
 .rl-title{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--or-dim);}
 .rl-detail{margin-top:.3rem;font-size:.8rem;color:var(--texte2);line-height:1.5;}
@@ -129,7 +123,7 @@ input::placeholder{color:var(--texte3);}
     </div>
 
     <div class="block">
-      <p class="slabel">Date &amp; Créneau</p>
+      <p class="slabel">Date &amp; Créneau (18:30 - 00:00)</p>
       <div class="field" style="margin-bottom:1.2rem;">
         <label for="date">Date de retrait</label>
         <input type="date" id="date"/>
@@ -165,8 +159,7 @@ input::placeholder{color:var(--texte3);}
 
     <div class="block" id="pizzas-details-block">
       <p class="slabel">Quelles pizzas souhaitez-vous ?</p>
-      <div id="pizzas-list">
-        </div>
+      <div id="pizzas-list"></div>
     </div>
 
     <div class="resume">
@@ -189,9 +182,6 @@ input::placeholder{color:var(--texte3);}
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-/* =====================================================
-    🔧 CONFIGURATION FIREBASE
-===================================================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
   authDomain: "pizza-c591d.firebaseapp.com",
@@ -203,34 +193,43 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ---- Config ---- */
 const PRIX_PIZZA=9.50, PRIX_FORMULE=10.00;
-const DEBUT=11, FIN=22, STEP=30;
+/* --- NOUVELLES HORAIRES --- */
+const DEBUT_H=18, DEBUT_M=30, FIN_H=24, STEP=30; 
 
-/* ---- State ---- */
 let S={pizzas:1,boissons:0,slot:null};
 
-/* ---- Date ---- */
 const today=new Date().toISOString().split('T')[0];
 const dateEl=document.getElementById('date');
 dateEl.min=today; dateEl.value=today;
 
-/* ---- Créneaux ---- */
 function buildSlots(){
   const g=document.getElementById('slots-grid'); g.innerHTML='';
-  for(let h=DEBUT;h<FIN;h++) for(let m=0;m<60;m+=STEP){
-    const lbl=pad(h)+':'+pad(m);
-    const d=document.createElement('div');
-    d.className='slot'+(S.slot===lbl?' active':'');
-    d.textContent=lbl;
-    d.onclick=()=>{S.slot=lbl;document.getElementById('slot-err').style.display='none';buildSlots();};
-    g.appendChild(d);
+  for(let h=DEBUT_H; h<FIN_H; h++){
+    for(let m=0; m<60; m+=STEP){
+      if(h===18 && m<30) continue; // On commence à 18h30
+      
+      const lbl = pad(h === 24 ? 0 : h) + ':' + pad(m);
+      const d=document.createElement('div');
+      d.className='slot'+(S.slot===lbl?' active':'');
+      d.textContent=lbl;
+      d.onclick=()=>{S.slot=lbl;document.getElementById('slot-err').style.display='none';buildSlots();};
+      g.appendChild(d);
+      
+      if(h === 23 && m === 30) { // Ajout de l'heure pile de minuit
+         const final = "00:00";
+         const df = document.createElement('div');
+         df.className='slot'+(S.slot===final?' active':'');
+         df.textContent=final;
+         df.onclick=()=>{S.slot=final;document.getElementById('slot-err').style.display='none';buildSlots();};
+         g.appendChild(df);
+      }
+    }
   }
 }
 function pad(n){return String(n).padStart(2,'0');}
 buildSlots();
 
-/* ---- Steppers ---- */
 function change(k,d){
   S[k]=Math.max(0,S[k]+d);
   if(k==='boissons'&&S.boissons>S.pizzas) S.pizzas=S.boissons;
@@ -239,22 +238,17 @@ function change(k,d){
   maj();
 }
 
-/* ---- Mise à jour Résumé et Champs Pizzas ---- */
 function maj(){
   const f=Math.min(S.boissons,S.pizzas), s=S.pizzas-f;
   const total=f*PRIX_FORMULE+s*PRIX_PIZZA;
-  
   const parts=[];
   if(f>0) parts.push(f+' formule'+(f>1?'s':'')+' pizza+boisson');
   if(s>0) parts.push(s+' pizza'+(s>1?'s':'')+' seule'+(s>1?'s':''));
   document.getElementById('r-detail').textContent=parts.join(' + ')||'Aucun article';
   document.getElementById('r-total').textContent=total.toFixed(2).replace('.',',')+' €';
 
-  // Gestion des champs de saisie des noms
   const container = document.getElementById('pizzas-list');
-  const currentInputs = container.querySelectorAll('input');
-  const savedNames = Array.from(currentInputs).map(input => input.value);
-  
+  const savedNames = Array.from(container.querySelectorAll('input')).map(input => input.value);
   container.innerHTML = '';
   if(S.pizzas === 0) {
     document.getElementById('pizzas-details-block').style.display = 'none';
@@ -262,27 +256,19 @@ function maj(){
     document.getElementById('pizzas-details-block').style.display = 'block';
     for(let i=1; i <= S.pizzas; i++) {
       const val = savedNames[i-1] || '';
-      container.innerHTML += `
-        <div class="field">
-          <label>Pizza n°${i}</label>
-          <input type="text" class="piz-name" placeholder="Ex: Reine, 4 Fromages..." value="${val}">
-        </div>`;
+      container.innerHTML += `<div class="field"><label>Pizza n°${i}</label><input type="text" class="piz-name" placeholder="Ex: Reine, Calzone..." value="${val}"></div>`;
     }
   }
   return total;
 }
 maj();
 
-/* ---- Soumission ---- */
 async function soumettre(){
   const nom=document.getElementById('nom').value.trim();
   const tel=document.getElementById('tel').value.trim();
   const date=document.getElementById('date').value;
   const errEl=document.getElementById('error-msg');
-  
-  // Noms des pizzas
-  const nameInputs = document.querySelectorAll('.piz-name');
-  const nomsPizzas = Array.from(nameInputs).map(i => i.value.trim()).filter(v => v !== "");
+  const nomsPizzas = Array.from(document.querySelectorAll('.piz-name')).map(i => i.value.trim()).filter(v => v !== "");
 
   errEl.style.display='none';
   if(!nom) return showErr('Veuillez saisir votre nom.');
@@ -298,15 +284,13 @@ async function soumettre(){
   try{
     await db.collection('reservations').add({
       nom, telephone:tel, dateRetrait:date, heureRetrait:S.slot,
-      nbPizzas:S.pizzas, nbBoissons:S.boissons, 
-      detailsPizzas: nomsPizzas,
-      totalEuros:total,
-      creeLe:firebase.firestore.FieldValue.serverTimestamp()
+      nbPizzas:S.pizzas, nbBoissons:S.boissons, detailsPizzas: nomsPizzas,
+      totalEuros:total, creeLe:firebase.firestore.FieldValue.serverTimestamp()
     });
     document.getElementById('main-form').style.display='none';
     document.getElementById('success-screen').style.display='block';
     document.getElementById('success-txt').innerHTML=
-      `Merci <strong>${nom}</strong> !<br>Vos pizzas (<strong>${nomsPizzas.join(', ')}</strong>) seront prêtes le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
+      `Merci <strong>${nom}</strong> !<br>Votre commande (<strong>${nomsPizzas.join(', ')}</strong>) est enregistrée pour le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
   }catch(e){
     showErr('Erreur : '+e.message);
     btn.disabled=false; btn.innerHTML='Confirmer la réservation';
@@ -319,7 +303,7 @@ function showErr(msg){
 }
 
 function resetForm(){
-  location.reload(); // Plus simple pour tout remettre à zéro proprement
+  location.reload();
 }
 </script>
 </body>
