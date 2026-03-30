@@ -287,7 +287,7 @@ function maj(){
   container.innerHTML = '';
   if(S.pizzas > 0) {
     document.getElementById('pizzas-details-block').style.display = 'block';
-    const options = `<option value="">-- Choisir --</option><option value="Margherita">Margherita</option><option value="Forestière">Forestière</option><option value="Quatre Fromages">Quatre Fromages</option><option value="Crème-Saumon">Crème-Saumon</option><option value="Méditerranéenne">Méditerranéenne (Thon)</option><option value="Napolitaine">Napolitaine (Anchois)</option><option value="Chèvre-Miel">Chèvre-Miel</option>`;
+    const options = `<option value="">-- Choisir --</option><option value="Margherita">Margherita</option><option value="Forestière">Forestière</option><option value="Quatre-Fromages">Quatre-Fromages</option><option value="Crème-Saumon">Crème-Saumon</option><option value="Méditerranéenne">Méditerranéenne (Thon)</option><option value="Napolitaine">Napolitaine (Anchois)</option><option value="Chèvre-Miel">Chèvre-Miel</option>`;
 
     for(let i=1; i <= S.pizzas; i++) {
       const saved = savedState[i-1] || {name:'', isCreme:false};
