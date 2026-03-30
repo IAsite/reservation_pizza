@@ -31,24 +31,36 @@ header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,6vw,3.6r
 
 .wrap{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 1.25rem 6rem;}
 
+/* Prix */
 .prix-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.5rem;}
 .prix-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.3rem;display:flex;gap:.9rem;align-items:center;}
 .prix-icon{font-size:1.4rem;}
 .prix-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);margin-bottom:.25rem;}
 .prix-val{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--or-pale);}
 
-.slabel{font-size:.68rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--texte3);margin-bottom:.8rem;display:flex;align-items:center;gap:.7rem;}
+/* Section Carte (Visuel complet) */
+.menu-card-img {
+    width: 100%;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: block;
+}
+
+.slabel{font-size:.68rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--texte3);margin-bottom:1rem;display:flex;align-items:center;gap:.7rem;}
 .slabel::after{content:'';flex:1;height:1px;background:var(--border);}
 
+/* Blocks */
 .block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem;margin-bottom:1.1rem;animation:fadeUp .3s ease both;}
 
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
 .field{display:flex;flex-direction:column;gap:.45rem;margin-bottom: 0.8rem;}
 label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);font-weight:600;}
-input,select{height:46px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0 .9rem;font-size:.92rem;font-family:'Syne',sans-serif;color:var(--texte);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;color-scheme:dark;}
-input:focus,select:focus{border-color:var(--or-dim);}
-input::placeholder{color:var(--texte3);}
+input{height:46px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0 .9rem;font-size:.92rem;font-family:'Syne',sans-serif;color:var(--texte);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;color-scheme:dark;}
+input:focus{border-color:var(--or-dim);}
 
+/* Steppers */
 .qty-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
 .qty-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.95rem 1.1rem;display:flex;flex-direction:column;gap:.55rem;}
 .qty-header{display:flex;align-items:center;gap:.5rem;}
@@ -60,29 +72,90 @@ input::placeholder{color:var(--texte3);}
 .sval{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--texte);min-width:26px;text-align:center;}
 .qty-sub{font-size:.72rem;color:var(--texte3);}
 
+/* Time slots */
 .slots-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;}
 @media(max-width:430px){.slots-grid{grid-template-columns:repeat(4,1fr);}}
 .slot{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:.55rem .2rem;text-align:center;font-size:.82rem;font-weight:600;color:var(--texte2);cursor:pointer;transition:all .15s;user-select:none;}
 .slot.active{background:rgba(212,151,58,0.14);border-color:var(--or-dim);color:var(--or-pale);}
 .slot-err{font-size:.78rem;color:#E08080;margin-top:.5rem;display:none;}
 
+/* Résumé */
 .resume{background:rgba(212,151,58,0.07);border:1px solid rgba(212,151,58,0.22);border-radius:var(--r);padding:1.3rem 1.5rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;}
 .rl-title{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--or-dim);}
 .rl-detail{margin-top:.3rem;font-size:.8rem;color:var(--texte2);line-height:1.5;}
 .r-total{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:700;color:var(--or-pale);white-space:nowrap;}
 
+/* Boutons */
 .btn-submit{width:100%;height:56px;background:var(--or);color:#0F0D0B;border:none;border-radius:var(--r);font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:background .2s;}
 .btn-submit:disabled{background:#2E2920;color:var(--texte3);cursor:not-allowed;}
 
+/* Messages */
 .error-msg{background:rgba(185,64,64,0.1);border:1px solid rgba(185,64,64,0.3);color:#E08080;border-radius:8px;padding:.8rem 1rem;font-size:.86rem;margin-bottom:0.9rem;display:none;}
 .surcharge-msg{background:rgba(212,151,58,0.1);border:1px solid var(--or);color:var(--or-pale);padding:1rem;border-radius:8px;font-size:0.85rem;margin-bottom:1rem;line-height:1.4;display:none;}
 
 .success-screen{display:none;text-align:center;padding:3rem 1.5rem;animation:fadeUp .4s ease;}
 .ok-badge{width:76px;height:76px;border-radius:50%;background:rgba(74,140,92,0.13);border:1px solid rgba(74,140,92,0.35);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.4rem;}
 
+/* Animations & Spiffe */
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:480px){.prix-row,.field-row,.qty-row{grid-template-columns:1fr;}}
+
+/* --- NOUVEAU : STYLE POUR LA SÉLECTION AVEC IMAGES --- */
+.pizza-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.piz-row-with-img {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 0.8rem;
+    background: var(--surface2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+/* Le petit aperçu de la pizza tiré de IMG_3091.jpg */
+.piz-sprite-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    background-image: url('IMG_3091.jpg'); /* Charge la grande image */
+    background-size: 512px; /* Taille simulée de l'image originale pour le calcul */
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+}
+
+/* Positionnement pour chaque pizza */
+.piz-sprite-thumb.Margherita       { background-position: -20px -20px; }
+.piz-sprite-thumb.Forestière       { background-position: -260px -20px; }
+.piz-sprite-thumb.Quatre.Fromages  { background-position: -20px -260px; }
+.piz-sprite-thumb.Crème-Saumon     { background-position: -260px -260px; }
+.piz-sprite-thumb.Méditerranéenne  { background-position: -20px -500px; }
+.piz-sprite-thumb.Napolitaine      { background-position: -260px -500px; }
+.piz-sprite-thumb.Chèvre-Miel      { background-position: -140px -720px; }
+.piz-sprite-thumb.vide             { background-image: none; background: var(--border); }
+
+.piz-dropdown-wrap {
+    flex-grow: 1;
+}
+
+select.piz-name {
+    width: 100%;
+    height: 46px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 .9rem;
+    font-size:.92rem;
+    font-family:'Syne',sans-serif;
+    color:var(--texte);
+    outline:none;
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -91,8 +164,9 @@ input::placeholder{color:var(--texte3);}
 
 <header>
   <div class="logo-ring">🍕</div>
-  <h1>La Casa des pizzas</h1>
+  <h1>La casa des pizzas</h1>
   <p class="sub">Commande &amp; retrait sur place</p>
+  <p class="sub">paiement uniquement en especes</p>
   <div class="divider"><span>réserver</span></div>
 </header>
 
@@ -108,6 +182,9 @@ input::placeholder{color:var(--texte3);}
       <div><div class="prix-label">+ Boisson</div><div class="prix-val">10,00 €</div></div>
     </div>
   </div>
+
+  <div class="slabel">Notre Carte</div>
+  <img src="IMG_3091.jpg" alt="Menu La Bella Pizza" class="menu-card-img">
 
   <div id="main-form">
     <div class="block">
@@ -154,8 +231,9 @@ input::placeholder{color:var(--texte3);}
     </div>
 
     <div class="block" id="pizzas-details-block">
-      <p class="slabel">Quelles pizzas souhaitez-vous ?</p>
-      <div id="pizzas-list"></div>
+      <p class="slabel">Sélectionnez vos pizzas</p>
+      <div id="pizzas-list" class="pizza-picker">
+        </div>
     </div>
 
     <div class="resume">
@@ -164,7 +242,7 @@ input::placeholder{color:var(--texte3);}
     </div>
 
     <div class="error-msg" id="error-msg"></div>
-    <div class="surcharge-msg" id="surcharge-msg">⚠️ <strong>Restaurant surchargé :</strong> Il y a déjà trop de commandes pour ce créneau. Veuillez attendre 15 min ou choisir une autre heure, nous sommes surchargés pour le moment.</div>
+    <div class="surcharge-msg" id="surcharge-msg">⚠️ <strong>Restaurant surchargé :</strong> Créneau complet. Veuillez choisir une autre heure (max 2 commandes toutes les 15 min).</div>
     
     <button class="btn-submit" id="btn-submit" onclick="soumettre()">Confirmer la réservation</button>
   </div>
@@ -181,11 +259,9 @@ input::placeholder{color:var(--texte3);}
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script>
-/* =====================================================
-    🔧 CONFIGURATION FIREBASE (À REMPLIR)
-===================================================== */
+/* CONFIGURATION FIREBASE */
 const firebaseConfig = {
-  apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
+   apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
   authDomain: "pizza-c591d.firebaseapp.com",
   projectId: "pizza-c591d",
   storageBucket: "pizza-c591d.firebasestorage.app",
@@ -195,31 +271,28 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ---- Config Horaires & Limites ---- */
 const PRIX_PIZZA=9.50, PRIX_FORMULE=10.00;
-const DEBUT_H=18, DEBUT_M=30, FIN_H=24, STEP=15; // STEP changé à 15 min
-const MAX_PAR_CRENEAU = 2; // Limite changée à 2 commandes
+const DEBUT_H=18, DEBUT_M=30, FIN_H=24, STEP=15; 
+const MAX_PAR_CRENEAU = 2; 
 
 let S={pizzas:1,boissons:0,slot:null};
 
 const today=new Date().toISOString().split('T')[0];
-const dateEl=document.getElementById('date');
-dateEl.min=today; dateEl.value=today;
+document.getElementById('date').min=today; 
+document.getElementById('date').value=today;
 
 function buildSlots(){
   const g=document.getElementById('slots-grid'); g.innerHTML='';
   for(let h=DEBUT_H; h<FIN_H; h++){
     for(let m=0; m<60; m+=STEP){
       if(h===18 && m<30) continue; 
-      
       const lbl = pad(h === 24 ? 0 : h) + ':' + pad(m);
       const d=document.createElement('div');
       d.className='slot'+(S.slot===lbl?' active':'');
       d.textContent=lbl;
       d.onclick=()=>{S.slot=lbl;document.getElementById('slot-err').style.display='none';buildSlots();};
       g.appendChild(d);
-      
-      if(h === 23 && m === 45) { // Finir pile à minuit
+      if(h === 23 && m === 45) {
          const final = "00:00";
          const df = document.createElement('div');
          df.className='slot'+(S.slot===final?' active':'');
@@ -241,25 +314,61 @@ function change(k,d){
   maj();
 }
 
+/* NOUVEAU : Fonction pour mettre à jour la vignette image quand on change de pizza */
+function updatePizzaThumb(selectEl) {
+    const val = selectEl.value;
+    // On trouve la vignette parente
+    const thumbEl = selectEl.closest('.piz-row-with-img').querySelector('.piz-sprite-thumb');
+    // On reset les classes et on ajoute la nouvelle ou 'vide'
+    thumbEl.className = 'piz-sprite-thumb';
+    if(val) {
+        // Gère les noms composés pour CSS (Quatre Fromages -> Quatre Fromages)
+        thumbEl.classList.add(val.replace(' (Thon)','').replace(' (Anchois)',''));
+    } else {
+        thumbEl.classList.add('vide');
+    }
+}
+
 function maj(){
   const f=Math.min(S.boissons,S.pizzas), s=S.pizzas-f;
   const total=f*PRIX_FORMULE+s*PRIX_PIZZA;
-  const parts=[];
-  if(f>0) parts.push(f+' formule'+(f>1?'s':'')+' pizza+boisson');
-  if(s>0) parts.push(s+' pizza'+(s>1?'s':'')+' seule'+(s>1?'s':''));
-  document.getElementById('r-detail').textContent=parts.join(' + ')||'Aucun article';
+  document.getElementById('r-detail').textContent=(f>0?f+' formule(s) ':'')+(s>0?'+ '+s+' pizza(s) seule(s)':'');
   document.getElementById('r-total').textContent=total.toFixed(2).replace('.',',')+' €';
 
   const container = document.getElementById('pizzas-list');
-  const savedNames = Array.from(container.querySelectorAll('input')).map(input => input.value);
+  const savedNames = Array.from(container.querySelectorAll('select')).map(s => s.value);
   container.innerHTML = '';
+  
   if(S.pizzas === 0) {
     document.getElementById('pizzas-details-block').style.display = 'none';
   } else {
     document.getElementById('pizzas-details-block').style.display = 'block';
+    const options = `
+      <option value="">-- Choisir une pizza --</option>
+      <option value="Margherita">Margherita</option>
+      <option value="Forestière">Forestière</option>
+      <option value="Quatre Fromages">Quatre Fromages</option>
+      <option value="Crème-Saumon">Crème-Saumon</option>
+      <option value="Méditerranéenne">Méditerranéenne (Thon)</option>
+      <option value="Napolitaine">Napolitaine (Anchois)</option>
+      <option value="Chèvre-Miel">Chèvre-Miel</option>
+    `;
+
     for(let i=1; i <= S.pizzas; i++) {
-      const val = savedNames[i-1] || '';
-      container.innerHTML += `<div class="field"><label>Pizza n°${i}</label><input type="text" class="piz-name" placeholder="Ex: Reine, Calzone..." value="${val}"></div>`;
+      const selected = savedNames[i-1] || '';
+      const div = document.createElement('div');
+      div.className = 'piz-row-with-img';
+      div.innerHTML = `
+        <div class="piz-sprite-thumb vide"></div>
+        <div class="piz-dropdown-wrap">
+            <label>Pizza n°${i}</label>
+            <select class="piz-name" onchange="updatePizzaThumb(this)">${options}</select>
+        </div>
+      `;
+      container.appendChild(div);
+      const select = div.querySelector('select');
+      select.value = selected;
+      updatePizzaThumb(select); // Mise à jour de l'image au chargement
     }
   }
   return total;
@@ -274,23 +383,20 @@ async function soumettre(){
   const surchEl=document.getElementById('surcharge-msg');
   const btn=document.getElementById('btn-submit');
   
-  const nameInputs = document.querySelectorAll('.piz-name');
-  const nomsPizzas = Array.from(nameInputs).map(i => i.value.trim()).filter(v => v !== "");
+  const nomsPizzas = Array.from(document.querySelectorAll('.piz-name')).map(s => s.value).filter(v => v !== "");
 
   errEl.style.display='none';
   surchEl.style.display='none';
 
-  if(!nom) return showErr('Veuillez saisir votre nom.');
-  if(!tel) return showErr('Veuillez saisir votre téléphone.');
+  if(!nom || !tel) return showErr('Veuillez remplir vos informations.');
   if(!S.slot) { document.getElementById('slot-err').style.display='block'; return; }
   if(S.pizzas === 0) return showErr('Choisissez au moins une pizza.');
-  if(nomsPizzas.length < S.pizzas) return showErr('Indiquez le nom de chaque pizza.');
+  if(nomsPizzas.length < S.pizzas) return showErr('Veuillez choisir un type pour chaque pizza.');
 
   btn.disabled = true;
   btn.innerHTML = 'Vérification...';
 
   try {
-    // VÉRIFICATION SURCHARGE (Max 2 par 15 min)
     const snapshot = await db.collection('reservations')
       .where('dateRetrait', '==', date)
       .where('heureRetrait', '==', S.slot)
@@ -298,7 +404,6 @@ async function soumettre(){
 
     if (snapshot.size >= MAX_PAR_CRENEAU) {
       surchEl.style.display = 'block';
-      surchEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       btn.disabled = false;
       btn.innerHTML = 'Confirmer la réservation';
       return;
@@ -314,7 +419,7 @@ async function soumettre(){
     document.getElementById('main-form').style.display='none';
     document.getElementById('success-screen').style.display='block';
     document.getElementById('success-txt').innerHTML=
-      `Merci de votre commande <strong>${nom}</strong> !<br>Votre commande (${nomsPizzas.join(', ')}) est enregistrée pour le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
+      `Merci de votre commande <strong>${nom}</strong> !<br>Commande (${nomsPizzas.join(', ')}) enregistrée pour <strong>${S.slot}</strong>.`;
   } catch(e) {
     showErr('Erreur : '+e.message);
     btn.disabled=false; btn.innerHTML='Confirmer la réservation';
