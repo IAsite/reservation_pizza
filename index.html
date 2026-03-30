@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>La Bella Pizza – Réserver</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F0D0B;--surface:#1A1713;--surface2:#221F1B;
+  --border:#332E27;--border2:#4A4238;
+  --or:#D4973A;--or-pale:#F2C97B;--or-dim:#8A5E1A;
+  --texte:#F0EAE0;--texte2:#A89880;--texte3:#6B5E50;
+  --rouge:#B94040;--succes:#4A8C5C;--r:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--texte);min-height:100vh;overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(212,151,58,0.13) 0%,transparent 55%);pointer-events:none;z-index:0;}
+
+.deco-line{height:3px;background:linear-gradient(90deg,transparent,var(--or),transparent);}
+
+header{position:relative;z-index:1;text-align:center;padding:3.5rem 1.5rem 2.5rem;}
+.logo-ring{width:76px;height:76px;border-radius:50%;border:1.5px solid var(--or-dim);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 1.4rem;position:relative;}
+.logo-ring::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(212,151,58,0.18);}
+header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700;letter-spacing:.3px;line-height:1.1;}
+.sub{margin-top:.5rem;font-size:.78rem;color:var(--texte3);letter-spacing:3px;text-transform:uppercase;}
+.divider{display:flex;align-items:center;gap:.9rem;margin:1.8rem auto 0;max-width:260px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+.divider span{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--or);}
+
+.wrap{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 1.25rem 6rem;}
+
+/* Prix */
+.prix-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.5rem;}
+.prix-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.3rem;display:flex;gap:.9rem;align-items:center;}
+.prix-icon{font-size:1.4rem;}
+.prix-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);margin-bottom:.25rem;}
+.prix-val{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--or-pale);}
+
+/* Section label */
+.slabel{font-size:.68rem;text-transform:uppercase;letter-spacing:2.5px;color:var(--texte3);margin-bottom:.8rem;display:flex;align-items:center;gap:.7rem;}
+.slabel::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* Blocks */
+.block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.6rem;margin-bottom:1.1rem;animation:fadeUp .3s ease both;}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.field{display:flex;flex-direction:column;gap:.45rem;margin-bottom: 0.8rem;}
+label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);font-weight:600;}
+input,select{height:46px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0 .9rem;font-size:.92rem;font-family:'Syne',sans-serif;color:var(--texte);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;color-scheme:dark;}
+input:focus,select:focus{border-color:var(--or-dim);}
+input::placeholder{color:var(--texte3);}
+
+/* Steppers */
+.qty-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+.qty-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.95rem 1.1rem;display:flex;flex-direction:column;gap:.55rem;}
+.qty-header{display:flex;align-items:center;gap:.5rem;}
+.qty-icon{font-size:1.05rem;}
+.qty-name{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--texte2);}
+.stepper{display:flex;align-items:center;gap:.5rem;}
+.sbtn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--texte2);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'Syne',sans-serif;}
+.sbtn:hover{border-color:var(--or-dim);color:var(--or-pale);background:rgba(212,151,58,0.08);}
+.sval{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--texte);min-width:26px;text-align:center;}
+.qty-sub{font-size:.72rem;color:var(--texte3);}
+
+/* Time slots */
+.slots-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;}
+@media(max-width:430px){.slots-grid{grid-template-columns:repeat(4,1fr);}}
+.slot{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:.55rem .2rem;text-align:center;font-size:.82rem;font-weight:600;color:var(--texte2);cursor:pointer;transition:all .15s;user-select:none;}
+.slot.active{background:rgba(212,151,58,0.14);border-color:var(--or-dim);color:var(--or-pale);}
+.slot-err{font-size:.78rem;color:#E08080;margin-top:.5rem;display:none;}
+
+/* Resume */
+.resume{background:rgba(212,151,58,0.07);border:1px solid rgba(212,151,58,0.22);border-radius:var(--r);padding:1.3rem 1.5rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.rl-title{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--or-dim);}
+.rl-detail{margin-top:.3rem;font-size:.8rem;color:var(--texte2);line-height:1.5;}
+.r-total{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:700;color:var(--or-pale);white-space:nowrap;}
+
+.btn-submit{width:100%;height:56px;background:var(--or);color:#0F0D0B;border:none;border-radius:var(--r);font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:background .2s;}
+.btn-submit:disabled{background:#2E2920;color:var(--texte3);cursor:not-allowed;}
+
+.error-msg{background:rgba(185,64,64,0.1);border:1px solid rgba(185,64,64,0.3);color:#E08080;border-radius:8px;padding:.8rem 1rem;font-size:.86rem;margin-bottom:.9rem;display:none;}
+
+.success-screen{display:none;text-align:center;padding:3rem 1.5rem;animation:fadeUp .4s ease;}
+.ok-badge{width:76px;height:76px;border-radius:50%;background:rgba(74,140,92,0.13);border:1px solid rgba(74,140,92,0.35);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.4rem;}
+
+.cfg{background:rgba(212,151,58,0.07);border:1px solid rgba(212,151,58,0.18);border-radius:8px;padding:.8rem 1rem;font-size:.78rem;color:var(--texte3);line-height:1.6;margin-bottom:1.3rem;}
+.spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(15,13,11,.25);border-top-color:#0F0D0B;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:480px){.prix-row,.field-row,.qty-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="deco-line"></div>
+
+<header>
+  <div class="logo-ring">🍕</div>
+  <h1>La Bella Pizza</h1>
+  <p class="sub">Commande &amp; retrait sur place</p>
+  <div class="divider"><span>réserver</span></div>
+</header>
+
+<div class="wrap">
+
+  <div class="cfg">⚙️ <strong>Firebase requis :</strong> Remplissez la section <code>firebaseConfig</code> dans le script.</div>
+
+  <div class="prix-row">
+    <div class="prix-item">
+      <div class="prix-icon">🍕</div>
+      <div><div class="prix-label">Pizza seule</div><div class="prix-val">9,50 €</div></div>
+    </div>
+    <div class="prix-item">
+      <div class="prix-icon">🥤</div>
+      <div><div class="prix-label">+ Boisson</div><div class="prix-val">10,00 €</div></div>
+    </div>
+  </div>
+
+  <div id="main-form">
+    <div class="block">
+      <p class="slabel">Vos informations</p>
+      <div class="field-row">
+        <div class="field"><label for="nom">Nom</label><input type="text" id="nom" placeholder="Jean Dupont"/></div>
+        <div class="field"><label for="tel">Téléphone</label><input type="tel" id="tel" placeholder="06 12 34 56 78"/></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <p class="slabel">Date &amp; Créneau</p>
+      <div class="field" style="margin-bottom:1.2rem;">
+        <label for="date">Date de retrait</label>
+        <input type="date" id="date"/>
+      </div>
+      <label style="display:block;margin-bottom:.65rem;font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--texte3);">Heure de retrait</label>
+      <div class="slots-grid" id="slots-grid"></div>
+      <div class="slot-err" id="slot-err">Veuillez choisir un créneau horaire.</div>
+    </div>
+
+    <div class="block">
+      <p class="slabel">Votre commande</p>
+      <div class="qty-row">
+        <div class="qty-block">
+          <div class="qty-header"><span class="qty-icon">🍕</span><span class="qty-name">Pizzas</span></div>
+          <div class="stepper">
+            <button class="sbtn" onclick="change('pizzas',-1)">−</button>
+            <span class="sval" id="v-pizzas">1</span>
+            <button class="sbtn" onclick="change('pizzas',1)">+</button>
+          </div>
+          <div class="qty-sub">9,50 € / pièce</div>
+        </div>
+        <div class="qty-block">
+          <div class="qty-header"><span class="qty-icon">🥤</span><span class="qty-name">+ Boisson</span></div>
+          <div class="stepper">
+            <button class="sbtn" onclick="change('boissons',-1)">−</button>
+            <span class="sval" id="v-boissons">0</span>
+            <button class="sbtn" onclick="change('boissons',1)">+</button>
+          </div>
+          <div class="qty-sub">+0,50 € / formule</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" id="pizzas-details-block">
+      <p class="slabel">Quelles pizzas souhaitez-vous ?</p>
+      <div id="pizzas-list">
+        </div>
+    </div>
+
+    <div class="resume">
+      <div><div class="rl-title">Total estimé</div><div class="rl-detail" id="r-detail">1 pizza seule</div></div>
+      <div class="r-total" id="r-total">9,50 €</div>
+    </div>
+
+    <div class="error-msg" id="error-msg"></div>
+    <button class="btn-submit" id="btn-submit" onclick="soumettre()">Confirmer la réservation</button>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="ok-badge">✓</div>
+    <h2>Réservation confirmée !</h2>
+    <p id="success-txt"></p>
+    <button class="btn-submit" style="background:var(--surface2); color:var(--texte); margin-top:1rem;" onclick="resetForm()">Nouvelle réservation</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script>
+/* =====================================================
+    🔧 CONFIGURATION FIREBASE
+===================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAVDe6aNDb4rzzgNgKmxo1hUUHTLoxP1fU",
+  authDomain: "pizza-c591d.firebaseapp.com",
+  projectId: "pizza-c591d",
+  storageBucket: "pizza-c591d.firebasestorage.app",
+  messagingSenderId: "967488725853",
+  appId: "1:967488725853:web:13704e75a7c0d683917eb4"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ---- Config ---- */
+const PRIX_PIZZA=9.50, PRIX_FORMULE=10.00;
+const DEBUT=11, FIN=22, STEP=30;
+
+/* ---- State ---- */
+let S={pizzas:1,boissons:0,slot:null};
+
+/* ---- Date ---- */
+const today=new Date().toISOString().split('T')[0];
+const dateEl=document.getElementById('date');
+dateEl.min=today; dateEl.value=today;
+
+/* ---- Créneaux ---- */
+function buildSlots(){
+  const g=document.getElementById('slots-grid'); g.innerHTML='';
+  for(let h=DEBUT;h<FIN;h++) for(let m=0;m<60;m+=STEP){
+    const lbl=pad(h)+':'+pad(m);
+    const d=document.createElement('div');
+    d.className='slot'+(S.slot===lbl?' active':'');
+    d.textContent=lbl;
+    d.onclick=()=>{S.slot=lbl;document.getElementById('slot-err').style.display='none';buildSlots();};
+    g.appendChild(d);
+  }
+}
+function pad(n){return String(n).padStart(2,'0');}
+buildSlots();
+
+/* ---- Steppers ---- */
+function change(k,d){
+  S[k]=Math.max(0,S[k]+d);
+  if(k==='boissons'&&S.boissons>S.pizzas) S.pizzas=S.boissons;
+  document.getElementById('v-pizzas').textContent=S.pizzas;
+  document.getElementById('v-boissons').textContent=S.boissons;
+  maj();
+}
+
+/* ---- Mise à jour Résumé et Champs Pizzas ---- */
+function maj(){
+  const f=Math.min(S.boissons,S.pizzas), s=S.pizzas-f;
+  const total=f*PRIX_FORMULE+s*PRIX_PIZZA;
+  
+  const parts=[];
+  if(f>0) parts.push(f+' formule'+(f>1?'s':'')+' pizza+boisson');
+  if(s>0) parts.push(s+' pizza'+(s>1?'s':'')+' seule'+(s>1?'s':''));
+  document.getElementById('r-detail').textContent=parts.join(' + ')||'Aucun article';
+  document.getElementById('r-total').textContent=total.toFixed(2).replace('.',',')+' €';
+
+  // Gestion des champs de saisie des noms
+  const container = document.getElementById('pizzas-list');
+  const currentInputs = container.querySelectorAll('input');
+  const savedNames = Array.from(currentInputs).map(input => input.value);
+  
+  container.innerHTML = '';
+  if(S.pizzas === 0) {
+    document.getElementById('pizzas-details-block').style.display = 'none';
+  } else {
+    document.getElementById('pizzas-details-block').style.display = 'block';
+    for(let i=1; i <= S.pizzas; i++) {
+      const val = savedNames[i-1] || '';
+      container.innerHTML += `
+        <div class="field">
+          <label>Pizza n°${i}</label>
+          <input type="text" class="piz-name" placeholder="Ex: Reine, 4 Fromages..." value="${val}">
+        </div>`;
+    }
+  }
+  return total;
+}
+maj();
+
+/* ---- Soumission ---- */
+async function soumettre(){
+  const nom=document.getElementById('nom').value.trim();
+  const tel=document.getElementById('tel').value.trim();
+  const date=document.getElementById('date').value;
+  const errEl=document.getElementById('error-msg');
+  
+  // Noms des pizzas
+  const nameInputs = document.querySelectorAll('.piz-name');
+  const nomsPizzas = Array.from(nameInputs).map(i => i.value.trim()).filter(v => v !== "");
+
+  errEl.style.display='none';
+  if(!nom) return showErr('Veuillez saisir votre nom.');
+  if(!tel) return showErr('Veuillez saisir votre téléphone.');
+  if(!S.slot) { document.getElementById('slot-err').style.display='block'; return; }
+  if(S.pizzas === 0) return showErr('Choisissez au moins une pizza.');
+  if(nomsPizzas.length < S.pizzas) return showErr('Indiquez le nom de chaque pizza.');
+
+  const total=maj();
+  const btn=document.getElementById('btn-submit');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Envoi…';
+
+  try{
+    await db.collection('reservations').add({
+      nom, telephone:tel, dateRetrait:date, heureRetrait:S.slot,
+      nbPizzas:S.pizzas, nbBoissons:S.boissons, 
+      detailsPizzas: nomsPizzas,
+      totalEuros:total,
+      creeLe:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('main-form').style.display='none';
+    document.getElementById('success-screen').style.display='block';
+    document.getElementById('success-txt').innerHTML=
+      `Merci <strong>${nom}</strong> !<br>Vos pizzas (<strong>${nomsPizzas.join(', ')}</strong>) seront prêtes le <strong>${date.split('-').reverse().join('/')}</strong> à <strong>${S.slot}</strong>.`;
+  }catch(e){
+    showErr('Erreur : '+e.message);
+    btn.disabled=false; btn.innerHTML='Confirmer la réservation';
+  }
+}
+
+function showErr(msg){
+  const el=document.getElementById('error-msg');
+  el.textContent=msg; el.style.display='block';
+}
+
+function resetForm(){
+  location.reload(); // Plus simple pour tout remettre à zéro proprement
+}
+</script>
+</body>
+</html>
