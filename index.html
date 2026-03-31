@@ -145,7 +145,7 @@ select.piz-name { width: 100%; height: 46px; background: var(--surface); border:
     </div>
 
     <div class="block">
-      <p class="slabel">Date &amp; Créneau (19:30 - 00:00)</p>
+      <p class="slabel">Date &amp; Créneau (18:00 - 00:00)</p>
       <div class="field" style="margin-bottom:1.2rem;">
         <label for="date">Date de retrait</label>
         <input type="date" id="date"/>
@@ -222,7 +222,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const PRIX_PIZZA=9.50, PRIX_FORMULE=10.00;
-const DEBUT_H=19, DEBUT_M=30, FIN_H=24, STEP=15; 
+const DEBUT_H=18, DEBUT_M=00, FIN_H=24, STEP=15; 
 const MAX_PAR_CRENEAU = 2; 
 
 let S={pizzas:1,boissons:0,slot:null};
@@ -235,7 +235,7 @@ function buildSlots(){
   const g=document.getElementById('slots-grid'); g.innerHTML='';
   for(let h=DEBUT_H; h<FIN_H; h++){
     for(let m=0; m<60; m+=STEP){
-      if(h===19 && m<30) continue; 
+      if(h===18 && m<00) continue; 
       const lbl = pad(h === 24 ? 0 : h) + ':' + pad(m);
       const d=document.createElement('div');
       d.className='slot'+(S.slot===lbl?' active':'');
